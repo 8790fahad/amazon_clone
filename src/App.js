@@ -43,12 +43,12 @@ const App = () => {
               <Checkout />
             </Route>
             <Route path="/payment">
-              <Payment />
+              <Elements stripe={promise}>
+                <Payment />
+              </Elements>
             </Route>
             <Route path="/login">
-              <Elements stripe={promise}>
-                <Login />
-              </Elements>
+              <Login />
             </Route>
             <Route>
               {/* <Login /> */}

@@ -17,13 +17,13 @@ const Payment = () => {
   const [proccess, setProccess] = React.useState('');
   const [client, setClient] = React.useState('');
   const [disabled, setDisabled] = React.useState(true);
-//   const stripe = useStripe();
-//   const element = useElements();
-React.useEffect(()=>{
-    const getClient =async ()=>{
-        const reponse =
-    }
-},[basket])
+  //   const stripe = useStripe();
+  //   const element = useElements();
+  // React.useEffect(()=>{
+  // const getClient =async ()=>{
+  //     const reponse =
+  // }
+  // },[basket])
   const handleSubmit = () => {};
   const handleChange = (e) => {
     setDisabled(e.empty);
@@ -69,7 +69,7 @@ React.useEffect(()=>{
             <div className="payment_details">
               <form onSubmit={handleSubmit}>
                 <CardElement onChange={handleChange} />
-                <div className="payment_container">
+                {/* <div className="payment_container">
                   <CurrencyFormat
                     decimalScale={2}
                     value={basket}
@@ -84,7 +84,7 @@ React.useEffect(()=>{
                      
                     )}
                   />
-                </div>
+                </div> */}
                 <button disabled={success || disabled || process}>
                   <span>{proccess ? <p>proccessing</p> : 'Buy Now'}</span>
                 </button>
