@@ -7,10 +7,15 @@ import Checkout from './Checkout/Checkout';
 import Login from './Login/Login';
 import { auth } from './Firebase/Firebase';
 import { UseStateValue } from './StateProvider/StateProvider';
-// import { UseStateValue } from './StateProvider/StateProvider';
+import Payment from './Payment/Payment';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+const promise = loadStripe(
+  'pk_test_51HQcxaIJj1Xhx6S6juS9ntE1YorDUkJmoKKLvG2IJbRLVS8M4bsMaaLVVTmJXOeROS90XRXOGbPzcG5PqdkO7IUJ00HmgTwql3'
+);
 const App = () => {
   const [state, dispatches] = UseStateValue();
-  const fahad =false
+  const fahad = false;
 
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
@@ -37,12 +42,17 @@ const App = () => {
             <Route path="/checkout">
               <Checkout />
             </Route>
+            <Route path="/payment">
+              <Payment />
+            </Route>
             <Route path="/login">
-              <Login />
+              <Elements stripe={promise}>
+                <Login />
+              </Elements>
             </Route>
             <Route>
               {/* <Login /> */}
-              {fahad?state:null}
+              {fahad ? state : null}
               <Home />
             </Route>
           </Switch>
