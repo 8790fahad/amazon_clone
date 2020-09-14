@@ -26,4 +26,21 @@
 .payment_address .payment_title .payment_details{
   flex: 0.8;
 }
-
+.payment_details > form {
+  max-width: 400px;
+}
+.payment_details > h4{
+  padding-bottom: 20px;
+}
+.button{
+  border: 1px solid;
+  background-color: #f0c14b;
+  margin-top: 10px;
+  color: black;
+  border-color: #a88734 #9c7e31 #846a29;
+  border-radius: 2px;
+  width: 200px;
+  height: 30px;
+  font-weight: bolder;
+  border: 1px solid;
+}

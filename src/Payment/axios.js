@@ -1,5 +1,6 @@
-import axios from'axios'
-const instance =axios.create({
-    baseURL:'sk_test_51HR3PQHNRSN0XZEC5kvAqc44Bvl1FORjo2NUaITv7nq7x6uXSAXoohigKN52Wp5iUKdSPhuw6AP4upriNymQIVPf0088Q5o8U6'
+import axios from 'axios'
+
+const instance = axios.create({
+    baseURL:'http://localhost:5001/challenge-8572d/us-central1/api'
 })
 export default instance

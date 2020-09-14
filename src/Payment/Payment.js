@@ -10,8 +10,11 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import axios from 'axios';
+import axios from './axios';
+import { useHistory } from 'react-router-dom';
+import { db } from '../Firebase/Firebase';
 const Payment = () => {
+  const history=useHistory()
   const [{ basket, user }, dispatch] = UseStateValue();
   const [error, setError] = React.useState(null);
   const [success, setSuccess] = React.useState(false);
@@ -21,21 +24,46 @@ const Payment = () => {
     const stripe = useStripe();
     const element = useElements();
   React.useEffect(()=>{
-  const getClient =async ()=>{
-      const reponse =await axios.create({
+  const getClient =async ()=>{ 
+      const reponse =await axios({
         method:"POST",
       url:`/payment/create?total=${basket.reduce((a, b)=> a + b.price, 0)*100}`
       })
-      
+      setClient(reponse.data.clientSecret);
+      console.log(reponse)
   }
+  getClient()
   },[basket])
+  console.log('hhdhshhdkk',client)
   const handleSubmit = async(e) => {
     e.preventDefault()
     setProccess(true)
-    const stripe=await stripe()
+    const payload=await stripe.confirmCardPayment(client, {
+      payment_method: {
+        card: element.getElement(CardElement),
+      },
+    })
+    .then((paymentIntent) => {
+      db.collection('user')
+      .doc(user?.uid)
+      .collection('order')
+      .set({
+        basket:basket,
+        amount:paymentIntent.amount,
+        created:paymentIntent.created
+      })
 
+
+      setSuccess(true);
+      console.log(paymentIntent)
+      setError(null);
+      setProccess(false);
+      history.replace('/orders');
+    });
+console.log(payload)
   };
   const handleChange = (e) => {
+    console.log(e)
     setDisabled(e.empty);
     setError(e.error ? e.error.massage : '');
   };
@@ -53,7 +81,7 @@ const Payment = () => {
             <div className="payment_address">
               <p>{user?.email}</p>
               <p>8790 Gama</p>
-              <p>Nassarawa LGA Kano</p>
+  <p>Nassarawa LGA Kano</p>
             </div>
           </div>
           <div className="payment_section">
@@ -93,10 +121,10 @@ const Payment = () => {
         prefix={'Order Total:$'}
                   />
                   <br ></br>
-                  <button onClick={handleSubmit} disabled={disabled||proccess ||success}><span>{proccess?<p>proccessind</p>:"Buy Now"}</span></button>
+                  <button className='button' onClick={handleSubmit} disabled={disabled||proccess ||success}><span>{proccess?<p>proccessing</p>:"Buy Now"}</span></button>
 
                 </div>
-                {error & <div>{error}</div>}
+                {error && <div>{error}</div>}
                 </form>
             </div>
             
