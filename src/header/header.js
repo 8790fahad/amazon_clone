@@ -41,6 +41,7 @@ const Header= ()=>{
                     </span>
                 </div></Link>
             </div>
+            <Link to='order'>
             <div className="header_nav">
                 <div className="header_option">
                     <span className="header_optionOne">
@@ -51,6 +52,7 @@ const Header= ()=>{
                     </span>
                 </div>
             </div>
+            </Link>
             <div className="header_nav">
                 <div className="header_option">
                     <span className="header_optionOne">

@@ -12,7 +12,7 @@ import {
 } from '@stripe/react-stripe-js';
 import { response } from 'express';
 import { useHistory } from 'react-router-dom';
-import axios from './axios'
+import axios from './axios';
 // import Axios from 'axios';
 const Payment = () => {
   const [{ basket, user }, dispatch] = UseStateValue();
@@ -21,33 +21,38 @@ const Payment = () => {
   const [proccess, setProccess] = React.useState('');
   const [client, setClient] = React.useState('');
   const [disabled, setDisabled] = React.useState(true);
-  const history =useHistory()
-    const stripe = useStripe();
-    const element = useElements();
-  React.useEffect(()=>{
-  const getClient =async ()=>{
-      const reponse =await axios({
-        method:"POST",
-      url:`/payment/create?total=${basket.reduce((a, b)=> a + b.price, 0)*100}`
-      })
-      setClient(response.data.clientSecret)
-  }
-  // getClientSecret()
-  },[basket])
-  const handleSubmit = async(e) => {
-    e.preventDefault()
-    setProccess(true)
-    const stripe=await stripe.confirmCardPayment(client,{
-      payment_method:{
-        card:elements.getElement(CardElement)
-      }
-    }).then((paymentIntent)=>{
-      setSuccess(true)
-      setError(null)
-      setProccess(false)
-      history.replace('/orders')
-    })
+  const history = useHistory();
+  const stripe = useStripe();
+  const elements = useElements();
+  React.useEffect(() => {
+    const getClient = async () => {
+      const reponse = await axios({
+        method: 'POST',
+        url: `/payment/create?total=${
+          basket.reduce((a, b) => a + b.price, 0) * 100
+        }`,
+      });
+      setClient(response.data.clientSecret);
 
+    };
+    console.log(client)
+    getClient()
+  }, [basket]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setProccess(true);
+    const stripe = await stripe
+      .confirmCardPayment(client, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      })
+      .then((paymentIntent) => {
+        setSuccess(true);
+        setError(null);
+        setProccess(false);
+        history.replace('/orders');
+      });
   };
   const handleChange = (e) => {
     setDisabled(e.empty);
@@ -58,7 +63,7 @@ const Payment = () => {
       <div className="payment">
         <div className="payment_container">
           <h1>
-            Checkout (<Link to="/checkout">{basket?.length}i  tems</Link>)
+            Checkout (<Link to="/checkout">{basket?.length}i tems</Link>)
           </h1>
           <div className="payment_section">
             <div className="payment_title">
@@ -91,29 +96,29 @@ const Payment = () => {
               <p>Payment method</p>
             </div>
             <div className="payment_details">
-             <form  onSubmit={handleSubmit}>
-               <CardElement  onChange={handleChange}/> 
-                
-                <div className="payment_container">
-                  <CurrencyFormat 
-                  value={basket.reduce((a, b)=> a + b.price, 0)}
-                  render={(value)=>(
-                  <p>{value}</p>
-                  )}
-                  decimalScale={2}
-                  
-                  displayType={'text'}
-        thousandSeparator={true}
-        prefix={'Order Total:$'}
-                  />
-                  <br ></br>
-                  <button onClick={handleSubmit} disabled={disabled||proccess ||success}><span>{proccess?<p>proccessind</p>:"Buy Now"}</span></button>
+              <form onSubmit={handleSubmit}>
+                <CardElement onChange={handleChange} />
 
+                <div className="payment_container">
+                  <CurrencyFormat
+                    value={basket.reduce((a, b) => a + b.price, 0)}
+                    render={(value) => <p>{value}</p>}
+                    decimalScale={2}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'Order Total:$'}
+                  />
+                  <br></br>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={disabled || proccess || success}
+                  >
+                    <span>{proccess ? <p>proccessind</p> : 'Buy Now'}</span>
+                  </button>
                 </div>
                 {error & <div>{error}</div>}
-                </form>
+              </form>
             </div>
-            
           </div>
         </div>
       </div>
