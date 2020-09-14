@@ -10,10 +10,7 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { response } from 'express';
-import { useHistory } from 'react-router-dom';
-import axios from './axios'
-// import Axios from 'axios';
+import axios from 'axios';
 const Payment = () => {
   const [{ basket, user }, dispatch] = UseStateValue();
   const [error, setError] = React.useState(null);
@@ -21,32 +18,21 @@ const Payment = () => {
   const [proccess, setProccess] = React.useState('');
   const [client, setClient] = React.useState('');
   const [disabled, setDisabled] = React.useState(true);
-  const history =useHistory()
     const stripe = useStripe();
     const element = useElements();
   React.useEffect(()=>{
   const getClient =async ()=>{
-      const reponse =await axios({
+      const reponse =await axios.create({
         method:"POST",
       url:`/payment/create?total=${basket.reduce((a, b)=> a + b.price, 0)*100}`
       })
-      setClient(response.data.clientSecret)
+      
   }
-  // getClientSecret()
   },[basket])
   const handleSubmit = async(e) => {
     e.preventDefault()
     setProccess(true)
-    const stripe=await stripe.confirmCardPayment(client,{
-      payment_method:{
-        card:elements.getElement(CardElement)
-      }
-    }).then((paymentIntent)=>{
-      setSuccess(true)
-      setError(null)
-      setProccess(false)
-      history.replace('/orders')
-    })
+    const stripe=await stripe()
 
   };
   const handleChange = (e) => {
