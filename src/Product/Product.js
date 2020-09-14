@@ -14,7 +14,7 @@ setState({type:"ADD_TO_BASKET",item:{
 }})
     }
   return (
-    <div className="product">
+    <div className="product" style={{marginRight:"70px"}}>
       <div className="poduct_info">
         <p>{title}</p>
         <p className="product_price">
