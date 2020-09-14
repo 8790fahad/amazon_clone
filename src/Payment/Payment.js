@@ -10,6 +10,10 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
+import { response } from 'express';
+import { useHistory } from 'react-router-dom';
+import axios from './axios'
+// import Axios from 'axios';
 const Payment = () => {
   const [{ basket, user }, dispatch] = UseStateValue();
   const [error, setError] = React.useState(null);
@@ -17,14 +21,34 @@ const Payment = () => {
   const [proccess, setProccess] = React.useState('');
   const [client, setClient] = React.useState('');
   const [disabled, setDisabled] = React.useState(true);
-  //   const stripe = useStripe();
-  //   const element = useElements();
-  // React.useEffect(()=>{
-  // const getClient =async ()=>{
-  //     const reponse =
-  // }
-  // },[basket])
-  const handleSubmit = () => {};
+  const history =useHistory()
+    const stripe = useStripe();
+    const element = useElements();
+  React.useEffect(()=>{
+  const getClient =async ()=>{
+      const reponse =await axios({
+        method:"POST",
+      url:`/payment/create?total=${basket.reduce((a, b)=> a + b.price, 0)*100}`
+      })
+      setClient(response.data.clientSecret)
+  }
+  // getClientSecret()
+  },[basket])
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    setProccess(true)
+    const stripe=await stripe.confirmCardPayment(client,{
+      payment_method:{
+        card:elements.getElement(CardElement)
+      }
+    }).then((paymentIntent)=>{
+      setSuccess(true)
+      setError(null)
+      setProccess(false)
+      history.replace('/orders')
+    })
+
+  };
   const handleChange = (e) => {
     setDisabled(e.empty);
     setError(e.error ? e.error.massage : '');
@@ -67,30 +91,29 @@ const Payment = () => {
               <p>Payment method</p>
             </div>
             <div className="payment_details">
-              <form onSubmit={handleSubmit}>
-                <CardElement onChange={handleChange} />
-                {/* <div className="payment_container">
-                  <CurrencyFormat
-                    decimalScale={2}
-                    value={basket}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    renderText={(value) => (
+             <form  onSubmit={handleSubmit}>
+               <CardElement  onChange={handleChange}/> 
+                
+                <div className="payment_container">
+                  <CurrencyFormat 
+                  value={basket.reduce((a, b)=> a + b.price, 0)}
+                  render={(value)=>(
+                  <p>{value}</p>
+                  )}
+                  decimalScale={2}
                   
-                        <p>
-                          Order Total: <strong>{value}</strong>
-                        </p>
-                     
-                    )}
+                  displayType={'text'}
+        thousandSeparator={true}
+        prefix={'Order Total:$'}
                   />
-                </div> */}
-                <button disabled={success || disabled || process}>
-                  <span>{proccess ? <p>proccessing</p> : 'Buy Now'}</span>
-                </button>
-                    {error&&<div>{error}</div>}
-              </form>
+                  <br ></br>
+                  <button onClick={handleSubmit} disabled={disabled||proccess ||success}><span>{proccess?<p>proccessind</p>:"Buy Now"}</span></button>
+
+                </div>
+                {error & <div>{error}</div>}
+                </form>
             </div>
+            
           </div>
         </div>
       </div>
